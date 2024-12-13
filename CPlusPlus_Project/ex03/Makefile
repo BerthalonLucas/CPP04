@@ -1,13 +1,13 @@
 NAME = program_ex03
  
 SRC =   main.cpp \
-        Animal.cpp Dog.cpp Cat.cpp WrongAnimal.cpp WrongCat.cpp Brain.cpp AMateria.cpp Ice.cpp Cure.cpp Character.cpp MateriaSource.cpp
+        AMateria.cpp Ice.cpp Cure.cpp Character.cpp MateriaSource.cpp
 
 OBJS_DIR = build
 OBJS = $(addprefix $(OBJS_DIR)/, $(SRC:.cpp=.o))
  
 CXX = c++
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98
+CXXFLAGS = -Wall -Wextra -Werror -g -std=c++98 
  
 RED = \033[0;31m
 GREEN = \033[0;32m
@@ -24,7 +24,7 @@ $(NAME): $(OBJS)
 	@$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
 	@echo "$(VC)$(NAME)$(END) compilation $(GREEN)OK$(END)"
  
-$(OBJS_DIR)/%.o : %.cpp Animal.hpp Dog.hpp Cat.hpp WrongAnimal.hpp WrongCat.hpp Brain.hpp AMateria.hpp Ice.hpp Cure.hpp ICharacter.hpp Character.hpp IMateriaSource.hpp MateriaSource.hpp
+$(OBJS_DIR)/%.o : %.cpp AMateria.hpp Ice.hpp Cure.hpp ICharacter.hpp Character.hpp IMateriaSource.hpp MateriaSource.hpp
 	@mkdir -p $(dir $@)
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 	@echo "$(CYAN)Compilation de $<$(END)"

@@ -1,76 +1,53 @@
-#include "AAnimal.hpp"
-#include "Dog.hpp"
-#include "Cat.hpp"
-#include "WrongAnimal.hpp"
-#include "WrongCat.hpp"
-#include "Brain.hpp"
+#include "AMateria.hpp"
+#include "Character.hpp"
+#include "Cure.hpp"
+#include "Ice.hpp"
+#include "MateriaSource.hpp"
+#include "IMateriaSource.hpp"
 #include <iostream>
 
 int main()
 {
-	std::cout << "=== Basic Animal Tests ===" << std::endl;
-	{
-		const Dog dog;
-		const Cat cat;
-		
-		std::cout << dog.getType() << " says: ";
-		dog.makeSound();
-		std::cout << cat.getType() << " says: ";
-		cat.makeSound();
+	// Create a materia source and teach it some spells
+	IMateriaSource* materiaSource = new MateriaSource();
+	materiaSource->learnMateria(new Ice());
+	materiaSource->learnMateria(new Cure());
 
-	}
-	
-	std::cout << "\n=== Wrong Animal Tests ===" << std::endl;
-	{
-		const WrongAnimal* wrong = new WrongAnimal();
-		const WrongAnimal* wrongCat = new WrongCat();
-		
-		std::cout << wrong->getType() << " says: ";
-		wrong->makeSound();
-		std::cout << wrongCat->getType() << " says: ";
-		wrongCat->makeSound();
-		
-		delete wrong;
-		delete wrongCat;
-	}
-	
-	std::cout << "\n=== Brain Tests ===" << std::endl;
-	{
-		Dog* dog1 = new Dog();
-		dog1->getBrain()->setIdea(0, "I want to play!");
-		dog1->getBrain()->setIdea(1, "I love bones!");
-		
-		Dog* dog2 = new Dog(*dog1);
-		delete dog1;
-		
-		std::cout << "Dog2's first idea: " << dog2->getBrain()->getIdea(0) << std::endl;
-		std::cout << "Dog2's second idea: " << dog2->getBrain()->getIdea(1) << std::endl;
-		
-		delete dog2;
-	}
-	
-	std::cout << "\n=== Array of Animals ===" << std::endl;
-	{
-		const int numAnimals = 4;
-		AAnimal* animals[numAnimals];
-		
-		for(int i = 0; i < numAnimals/2; i++) {
-			animals[i] = new Dog();
-		}
-		for(int i = numAnimals/2; i < numAnimals; i++) {
-			animals[i] = new Cat();
-		}
-		
-		// Make them all sound off
-		for(int i = 0; i < numAnimals; i++) {
-			std::cout << animals[i]->getType() << " says: ";
-			animals[i]->makeSound();
-		}
-		
-		for(int i = 0; i < numAnimals; i++) {
-			delete animals[i];
-		}
-	}
-	
+	// Create the hero character
+	ICharacter* hero = new Character("Hero");
+
+	// Hero equips spells from the materia source
+	AMateria* iceSpell = materiaSource->createMateria("ice");
+	hero->equip(iceSpell);
+
+	AMateria* cureSpell = materiaSource->createMateria("cure");
+	hero->equip(cureSpell);
+
+	// Create the villain character
+	ICharacter* villain = new Character("Villain");
+
+	// Hero uses spells against the villain
+	hero->use(0, *villain); // Uses ice spell
+	hero->use(1, *villain); // Uses cure spell
+
+	// Attempt to use unequipped slots
+	hero->use(2, *villain);
+	hero->use(10, *villain);
+	hero->use(-5, *villain);
+
+	// Hero unequips a spell and tries to use it
+	hero->unequip(0);
+	hero->use(0, *villain);
+
+	// Clean up
+	hero->unequip(1);
+	hero->use(1, *villain);
+
+	delete villain;
+	delete hero;
+	delete materiaSource;
+	delete iceSpell;
+	delete cureSpell;
+
 	return 0;
 }
